@@ -343,18 +343,27 @@ export const HighlightStudio: React.FC<HighlightStudioProps> = ({
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-300 space-y-1">
-              <div className="font-bold text-white flex items-center gap-1.5">
-                <span>Qanday ishga tushiriladi?</span>
+            <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-300 space-y-2">
+              <div className="font-bold text-white flex items-center justify-between">
+                <span>Professional Movie Maker Sozlamalari:</span>
+                <span className="text-amber-400 font-mono text-[10px]">CRF 12 Ultra Lossless</span>
               </div>
-              <p>
-                1. Loyihangizdagi <code className="text-amber-400 font-mono font-bold">START_RECORDING.bat</code> faylini bosing.
-              </p>
-              <p>
-                2. CS2 avtomatik ravishda xavfsiz rejimda ochilib, ushbu demoni qo&apos;yadi.
-              </p>
-              <p>
-                3. O&apos;yin ichida <strong className="text-amber-400">[F9]</strong> tugmasini bosib videoni boshlang, <strong className="text-amber-400">[F10]</strong> bilan to&apos;xtatib tayyor MP4 videoni oling!
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-[10px]">
+                <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
+                  <div className="text-amber-400 font-bold">[F5] KINO REJIMI</div>
+                  <div className="text-slate-400 mt-0.5">HP, Armor, Radar, Hammasi yashiriladi (Clean 3D)</div>
+                </div>
+                <div className="p-2 rounded-lg bg-slate-950 border border-amber-500/30">
+                  <div className="text-emerald-400 font-bold">[F6] ESPORTS REJIMI</div>
+                  <div className="text-slate-300 mt-0.5">Faqat Killfeed & Nishon (Movie makerlar standarti)</div>
+                </div>
+                <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
+                  <div className="text-sky-400 font-bold">[F7] STANDART HUD</div>
+                  <div className="text-slate-400 mt-0.5">O&apos;yinning asl to&apos;liq menyulari qaytadi</div>
+                </div>
+              </div>
+              <p className="text-[10px] text-slate-400 pt-1">
+                Yozish uchun: <strong className="text-amber-400">[F9]</strong> Start, <strong className="text-amber-400">[F10]</strong> Stop. O&apos;yindan chiqqach <code className="text-amber-400 font-mono">PROCESS_CLIPS.bat</code> avtomatik MP4 qilib beradi.
               </p>
             </div>
           </div>
