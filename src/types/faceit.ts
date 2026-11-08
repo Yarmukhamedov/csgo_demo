@@ -26,6 +26,12 @@ export interface FaceitMatchItem {
   elo_diff: number; // +25 or -25
   demo_url: string; // Direct link to .dem.gz / .dem.zst
   demo_size_mb?: number;
+  game_mode?: "faceit" | "premier" | "competitive" | "community";
+  uploaded?: boolean;
+  date_group?: string;
+  exact_time?: string;
+  clips_count?: number;
+  rank_badge?: string;
   // User personal performance in this match
   personal_stats: {
     kills: number;

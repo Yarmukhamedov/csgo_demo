@@ -2,9 +2,13 @@
 
 import React, { useState } from "react";
 import { SteamHeader } from "@/components/SteamHeader";
+import { Sidebar } from "@/components/Sidebar";
 import { FaceitMatchBrowser } from "@/components/FaceitMatchBrowser";
+import { StatsView } from "@/components/StatsView";
 import { HighlightStudio } from "@/components/HighlightStudio";
 import { Radar2D } from "@/components/Radar2D";
+import { LoadoutsView } from "@/components/LoadoutsView";
+import { RecordsView } from "@/components/RecordsView";
 import { RoadmapSection } from "@/components/RoadmapSection";
 import { Footer } from "@/components/Footer";
 import { SteamAuthModal } from "@/components/SteamAuthModal";
@@ -13,10 +17,6 @@ import { SAMPLE_MATCH } from "@/lib/mock-match";
 import { DEFAULT_FACEIT_USER, SAMPLE_FACEIT_MATCHES } from "@/lib/faceit-service";
 import { MatchData, PlayerStats } from "@/types/demo";
 import { FaceitMatchItem, FaceitPlayer } from "@/types/faceit";
-import { 
-  Sparkles, CheckCircle, Video, Map, BarChart3, 
-  Flame, Crosshair, RefreshCw, Trophy, Shield, Download 
-} from "lucide-react";
 import confetti from "canvas-confetti";
 
 export default function Home() {
@@ -72,14 +72,14 @@ export default function Home() {
       mapDisplay: fMatch.map_display,
       date: fMatch.date_formatted,
       duration: fMatch.duration,
-      gameMode: "FACEIT Competitive 5v5",
+      gameMode: fMatch.game_mode === "premier" ? "CS2 Premier 5v5" : "FACEIT Competitive 5v5",
       teamCtName: fMatch.teams.faction1.name,
       teamTName: fMatch.teams.faction2.name,
       scoreCt: fMatch.score_team1,
       scoreT: fMatch.score_team2,
       winnerTeam: fMatch.score_team1 >= fMatch.score_team2 ? "CT" : "T",
       players: allPlayers,
-      highlights: SAMPLE_MATCH.highlights, // Carry highlights
+      highlights: SAMPLE_MATCH.highlights,
     };
 
     setMatchData(convertedMatch);
@@ -118,8 +118,10 @@ export default function Home() {
     });
   };
 
+  const uploadedCount = faceitMatches.filter((m) => m.uploaded).length;
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#171a21] text-[#c6d4df] selection:bg-[#66c0f4] selection:text-black">
+    <div className="min-h-screen flex flex-col bg-[#11141a] text-[#c6d4df] selection:bg-[#66c0f4] selection:text-black">
       {/* Top Steam Community Navigation Header */}
       <SteamHeader
         activeTab={activeTab}
@@ -129,31 +131,58 @@ export default function Home() {
         onOpenFaceitAuth={() => setIsFaceitModalOpen(true)}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-        {/* Tab 1: Faceit & CS Demo Manager Match Browser */}
-        {activeTab === "matches" && (
-          <FaceitMatchBrowser
-            user={faceitUser}
-            matches={faceitMatches}
-            onSelectMatchForStudio={handleSelectMatchForStudio}
-            onSelectMatchForRecord={handleSelectMatchForStudio}
+      {/* Main Content Area with Left Sidebar (CSDEMO Structure + Steam Design) */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex gap-6 items-start">
+          {/* Left Sticky Sidebar (Explicitly omitting Explore and Get the app as instructed) */}
+          <Sidebar
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            matchesCount={faceitMatches.length}
+            uploadedCount={uploadedCount}
           />
-        )}
 
-        {/* Tab 2: Highlight Studio & Video Reel Generator */}
-        {activeTab === "studio" && (
-          <HighlightStudio
-            match={matchData}
-            initialSelectedPlayer={selectedPlayer}
-          />
-        )}
+          {/* Right Main Panel View */}
+          <div className="flex-1 min-w-0">
+            {/* Tab: Matches (CSDEMO grouped layout + 1-Click .dem download + Faceit scoreboard) */}
+            {activeTab === "matches" && (
+              <FaceitMatchBrowser
+                user={faceitUser}
+                matches={faceitMatches}
+                onSelectMatchForStudio={handleSelectMatchForStudio}
+                onSelectMatchForRecord={handleSelectMatchForStudio}
+              />
+            )}
 
-        {/* Tab 3: 2D Tactical Radar Replay */}
-        {activeTab === "radar" && <Radar2D match={matchData} />}
+            {/* Tab: Stats */}
+            {activeTab === "stats" && (
+              <StatsView
+                user={faceitUser}
+                matches={faceitMatches}
+              />
+            )}
 
-        {/* Tab 4: Roadmap */}
-        {activeTab === "roadmap" && <RoadmapSection />}
+            {/* Tab: 3D Demo View (Tactical Radar Replay) */}
+            {activeTab === "radar" && <Radar2D match={matchData} />}
+
+            {/* Tab: Clips (Highlight Studio & Video Reels Player) */}
+            {activeTab === "studio" && (
+              <HighlightStudio
+                match={matchData}
+                initialSelectedPlayer={selectedPlayer}
+              />
+            )}
+
+            {/* Tab: Loadouts (CS2 Steam Inventory Skins) */}
+            {activeTab === "loadouts" && <LoadoutsView />}
+
+            {/* Tab: Records (Personal Records & Career Bests) */}
+            {activeTab === "records" && <RecordsView matches={faceitMatches} />}
+
+            {/* Tab: Roadmap */}
+            {activeTab === "roadmap" && <RoadmapSection />}
+          </div>
+        </div>
       </main>
 
       {/* Steam Auth Modal */}
