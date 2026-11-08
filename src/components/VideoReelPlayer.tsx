@@ -8,6 +8,8 @@ import {
   Flame, Crosshair, Star, Shield
 } from "lucide-react";
 import confetti from "canvas-confetti";
+import { generateHighlightVideo } from "@/lib/video-recorder";
+import { TelegramModal } from "./TelegramModal";
 
 interface VideoReelPlayerProps {
   match: MatchData;
@@ -31,6 +33,7 @@ export const VideoReelPlayer: React.FC<VideoReelPlayerProps> = ({
   const [isExporting, setIsExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState(0);
   const [exportSuccess, setExportSuccess] = useState(false);
+  const [isTelegramModalOpen, setIsTelegramModalOpen] = useState(false);
 
   const activeClip = highlights[currentClipIndex];
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -91,30 +94,45 @@ export const VideoReelPlayer: React.FC<VideoReelPlayerProps> = ({
     setIsPlaying(true);
   };
 
-  // MP4 Export simulation with realistic rendering progress & confetti
-  const handleExportMp4 = () => {
+  // Real Video Export using HTML5 Canvas & MediaRecorder
+  const handleExportMp4 = async () => {
     if (highlights.length === 0) return;
     setIsExporting(true);
     setExportProgress(5);
     setExportSuccess(false);
 
-    const interval = setInterval(() => {
-      setExportProgress((p) => {
-        if (p >= 100) {
-          clearInterval(interval);
-          setIsExporting(false);
-          setExportSuccess(true);
-          confetti({
-            particleCount: 120,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ["#f59e0b", "#00d2ff", "#ffffff"],
-          });
-          return 100;
-        }
-        return p + Math.floor(Math.random() * 15) + 8;
+    try {
+      const videoBlob = await generateHighlightVideo({
+        highlights,
+        player: playerStats,
+        settings,
+        mapName: match.mapDisplay,
+        onProgress: (percent) => setExportProgress(percent),
       });
-    }, 250);
+
+      // Create download link for the real generated video file
+      const url = URL.createObjectURL(videoBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `csdemo_${settings.selectedPlayer.toLowerCase()}_${match.mapDisplay.toLowerCase()}_highlight.webm`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setIsExporting(false);
+      setExportSuccess(true);
+      confetti({
+        particleCount: 140,
+        spread: 75,
+        origin: { y: 0.6 },
+        colors: ["#f59e0b", "#00d2ff", "#ffffff"],
+      });
+    } catch (err: any) {
+      console.error("Video export error:", err);
+      setIsExporting(false);
+      alert("Rolik renderlashda xatolik: " + (err.message || "Brauzeringiz MediaRecorder'ni qo'llab-quvvatlamaydi"));
+    }
   };
 
   // Generate HLAE .cfg script for local 120 FPS high-res rendering
@@ -429,15 +447,13 @@ mirv_cmd at ${activeClip.tickEnd} "mirv_streams record end; echo Highlight Compl
           <span>MP4 Rolikni Yuklab Olish</span>
         </button>
 
-        <a
-          href="https://t.me/csdemouz"
-          target="_blank"
-          rel="noreferrer"
+        <button
+          onClick={() => setIsTelegramModalOpen(true)}
           className="w-full py-3 px-4 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-400 font-bold text-xs transition-all flex items-center justify-center gap-2 text-center"
         >
           <Send className="w-4 h-4" />
           <span>Telegramga Yuborish</span>
-        </a>
+        </button>
       </div>
 
       {/* Secondary HLAE 120 FPS Script Action */}
@@ -450,6 +466,14 @@ mirv_cmd at ${activeClip.tickEnd} "mirv_streams record end; echo Highlight Compl
           <span>CS2 HLAE 120 FPS Render Skripti (.cfg)</span>
         </button>
       </div>
+
+      {/* Telegram Share Modal */}
+      <TelegramModal
+        isOpen={isTelegramModalOpen}
+        onClose={() => setIsTelegramModalOpen(false)}
+        match={match}
+        highlight={activeClip}
+      />
     </div>
   );
 };
