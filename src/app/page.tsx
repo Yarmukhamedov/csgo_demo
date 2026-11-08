@@ -1,219 +1,143 @@
 "use client";
 
 import React, { useState } from "react";
-import { Navbar } from "@/components/Navbar";
-import { HeroSection } from "@/components/HeroSection";
-import { Scoreboard } from "@/components/Scoreboard";
+import { SteamHeader } from "@/components/SteamHeader";
+import { FaceitMatchBrowser } from "@/components/FaceitMatchBrowser";
 import { HighlightStudio } from "@/components/HighlightStudio";
 import { Radar2D } from "@/components/Radar2D";
 import { RoadmapSection } from "@/components/RoadmapSection";
 import { Footer } from "@/components/Footer";
+import { SteamAuthModal } from "@/components/SteamAuthModal";
+import { FaceitAuthModal } from "@/components/FaceitAuthModal";
 import { SAMPLE_MATCH } from "@/lib/mock-match";
-import { MatchData } from "@/types/demo";
+import { DEFAULT_FACEIT_USER, SAMPLE_FACEIT_MATCHES } from "@/lib/faceit-service";
+import { MatchData, PlayerStats } from "@/types/demo";
+import { FaceitMatchItem, FaceitPlayer } from "@/types/faceit";
 import { 
   Sparkles, CheckCircle, Video, Map, BarChart3, 
-  Flame, Crosshair, RefreshCw, Trophy, Shield 
+  Flame, Crosshair, RefreshCw, Trophy, Shield, Download 
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<string>("overview");
+  const [activeTab, setActiveTab] = useState<string>("matches");
+  const [faceitUser, setFaceitUser] = useState<FaceitPlayer>(DEFAULT_FACEIT_USER);
+  const [faceitMatches, setFaceitMatches] = useState<FaceitMatchItem[]>(SAMPLE_FACEIT_MATCHES);
   const [matchData, setMatchData] = useState<MatchData>(SAMPLE_MATCH);
-  const [selectedPlayer, setSelectedPlayer] = useState<string>("S1Mple_UZ");
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [processStep, setProcessStep] = useState<string>("");
+  const [selectedPlayer, setSelectedPlayer] = useState<string>("Yarmukhamedov");
 
-  // Switch to studio with a specific player selected
-  const handleSelectPlayerForReel = (playerName: string) => {
-    setSelectedPlayer(playerName);
+  // Modals
+  const [isSteamModalOpen, setIsSteamModalOpen] = useState<boolean>(false);
+  const [isFaceitModalOpen, setIsFaceitModalOpen] = useState<boolean>(false);
+
+  // Switch to studio when user clicks "Ushbu O'yindan Rolik Yasash" on Faceit match
+  const handleSelectMatchForStudio = (fMatch: FaceitMatchItem) => {
+    // Map FaceitMatchItem to MatchData format
+    const allPlayers: PlayerStats[] = [
+      ...fMatch.teams.faction1.roster.map((p, idx) => ({
+        id: `p-ct-${idx}`,
+        name: p.nickname,
+        team: "CT" as const,
+        avatar: p.avatar,
+        kills: p.kills,
+        deaths: p.deaths,
+        assists: p.assists,
+        adr: p.adr,
+        hsPercentage: p.hs_percent,
+        hltvRating: p.hltv_rating,
+        mvps: p.is_mvp ? 4 : 1,
+        faceitLevel: p.skill_level,
+        premierRating: 15000 + p.kills * 120,
+      })),
+      ...fMatch.teams.faction2.roster.map((p, idx) => ({
+        id: `p-t-${idx}`,
+        name: p.nickname,
+        team: "T" as const,
+        avatar: p.avatar,
+        kills: p.kills,
+        deaths: p.deaths,
+        assists: p.assists,
+        adr: p.adr,
+        hsPercentage: p.hs_percent,
+        hltvRating: p.hltv_rating,
+        mvps: p.is_mvp ? 4 : 1,
+        faceitLevel: p.skill_level,
+        premierRating: 14000 + p.kills * 120,
+      })),
+    ];
+
+    const convertedMatch: MatchData = {
+      id: fMatch.match_id,
+      mapName: fMatch.map_name,
+      mapDisplay: fMatch.map_display,
+      date: fMatch.date_formatted,
+      duration: fMatch.duration,
+      gameMode: "FACEIT Competitive 5v5",
+      teamCtName: fMatch.teams.faction1.name,
+      teamTName: fMatch.teams.faction2.name,
+      scoreCt: fMatch.score_team1,
+      scoreT: fMatch.score_team2,
+      winnerTeam: fMatch.score_team1 >= fMatch.score_team2 ? "CT" : "T",
+      players: allPlayers,
+      highlights: SAMPLE_MATCH.highlights, // Carry highlights
+    };
+
+    setMatchData(convertedMatch);
+    setSelectedPlayer(faceitUser.nickname);
     setActiveTab("studio");
-    window.scrollTo({ top: 380, behavior: "smooth" });
+    window.scrollTo({ top: 120, behavior: "smooth" });
   };
 
-  // Real .dem file upload with /api/parse-demo integration
-  const handleFileUpload = async (file: File) => {
-    setIsProcessing(true);
-    setProcessStep(`${file.name} yuklanmoqda va o'qilmoqda...`);
-
-    const formData = new FormData();
-    formData.append("demo", file);
-
-    try {
-      setProcessStep("Rust & WebAssembly demo dvigateli orqali CS2 ticklari parslanyapti...");
-      const res = await fetch("/api/parse-demo", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.success && data.match) {
-        setProcessStep("Highlightlar aniqlandi: Ace, Clutch, Multikillar muvaffaqiyatli topildi!");
-        setTimeout(() => {
-          setIsProcessing(false);
-          setMatchData(data.match);
-          if (data.match.players.length > 0) {
-            setSelectedPlayer(data.match.players[0].name);
-          }
-          setActiveTab("studio");
-          confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.5 },
-            colors: ["#f59e0b", "#00d2ff"],
-          });
-        }, 600);
-      } else {
-        // Fallback with informational notification
-        console.warn("Parse API warning:", data.error);
-        setProcessStep("Fayl sinov demosi sifatida qabul qilindi va tahlil qilindi!");
-        setTimeout(() => {
-          setIsProcessing(false);
-          setMatchData({
-            ...SAMPLE_MATCH,
-            id: `demo-${Date.now().toString().slice(-6)}`,
-            date: "Hozirgina yuklandi",
-          });
-          setActiveTab("studio");
-          confetti({
-            particleCount: 70,
-            spread: 60,
-            origin: { y: 0.5 },
-            colors: ["#f59e0b", "#00d2ff"],
-          });
-        }, 1000);
-      }
-    } catch (err: any) {
-      console.error("Upload error:", err);
-      setIsProcessing(false);
-      alert("Demo yuklashda xatolik: " + (err.message || "Internet ulanishini tekshiring"));
-    }
+  const handleSteamLoginSuccess = (nickname: string) => {
+    setFaceitUser((u) => ({
+      ...u,
+      nickname,
+      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(nickname)}`,
+      is_logged_in: true,
+    }));
+    confetti({
+      particleCount: 80,
+      spread: 60,
+      origin: { y: 0.3 },
+      colors: ["#66c0f4", "#a4d007"],
+    });
   };
 
-  // Simulate Steam/Faceit code lookup
-  const handleShareCodeSubmit = (code: string) => {
-    setIsProcessing(true);
-    setProcessStep(`Steam/FACEIT orqali match qidirilmoqda: ${code}...`);
-
-    setTimeout(() => {
-      setProcessStep("Demo serverdan yuklab olindi va tahlil qilindi!");
-    }, 1500);
-
-    setTimeout(() => {
-      setIsProcessing(false);
-      setActiveTab("studio");
-      confetti({
-        particleCount: 80,
-        spread: 60,
-        origin: { y: 0.5 },
-        colors: ["#f59e0b", "#00d2ff"],
-      });
-    }, 2200);
-  };
-
-  const handleLoadSample = () => {
-    setMatchData(SAMPLE_MATCH);
-    setActiveTab("studio");
-    window.scrollTo({ top: 400, behavior: "smooth" });
+  const handleFaceitConnectSuccess = (nickname: string) => {
+    setFaceitUser((u) => ({
+      ...u,
+      nickname,
+      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(nickname)}`,
+      is_logged_in: true,
+    }));
+    confetti({
+      particleCount: 90,
+      spread: 70,
+      origin: { y: 0.3 },
+      colors: ["#ff5500", "#66c0f4"],
+    });
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#07090e] text-slate-100 relative">
-      {/* Top Navbar */}
-      <Navbar
+    <div className="min-h-screen flex flex-col bg-[#171a21] text-[#c6d4df] selection:bg-[#66c0f4] selection:text-black">
+      {/* Top Steam Community Navigation Header */}
+      <SteamHeader
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenUpload={() => window.scrollTo({ top: 120, behavior: "smooth" })}
+        user={faceitUser}
+        onOpenSteamAuth={() => setIsSteamModalOpen(true)}
+        onOpenFaceitAuth={() => setIsFaceitModalOpen(true)}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-10">
-        {/* Hero Section */}
-        <HeroSection
-          onLoadSample={handleLoadSample}
-          onFileUpload={handleFileUpload}
-          onShareCodeSubmit={handleShareCodeSubmit}
-        />
-
-        {/* Processing Indicator Modal / Banner */}
-        {isProcessing && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
-            <div className="p-8 rounded-2xl bg-[#0c101d] border border-amber-500/40 text-center max-w-md w-full shadow-2xl space-y-4">
-              <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                <RefreshCw className="w-7 h-7 animate-spin" />
-              </div>
-              <h3 className="text-lg font-black text-white">
-                Demo Tahlil Qilinmoqda
-              </h3>
-              <p className="text-xs text-amber-400 font-mono animate-pulse">
-                {processStep}
-              </p>
-              <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
-                <div className="h-full bg-amber-500 animate-[pulse_1s_ease-in-out_infinite] w-2/3 mx-auto" />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Navigation Tabs Bar */}
-        <div className="flex items-center justify-center gap-2 border-b border-slate-800 pb-4">
-          <button
-            onClick={() => setActiveTab("overview")}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all ${
-              activeTab === "overview"
-                ? "bg-amber-500 text-black shadow-lg shadow-amber-500/20"
-                : "bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800"
-            }`}
-          >
-            <BarChart3 className="w-4 h-4" />
-            Match Tahlili (Scoreboard)
-          </button>
-
-          <button
-            onClick={() => setActiveTab("studio")}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all ${
-              activeTab === "studio"
-                ? "bg-amber-500 text-black shadow-lg shadow-amber-500/20"
-                : "bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800"
-            }`}
-          >
-            <Video className="w-4 h-4" />
-            Rolik Studio (Reels / Shorts)
-            <span className="px-1.5 py-0.2 rounded-full text-[9px] bg-black/30 text-black font-extrabold">
-              HOT
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("radar")}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all ${
-              activeTab === "radar"
-                ? "bg-amber-500 text-black shadow-lg shadow-amber-500/20"
-                : "bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800"
-            }`}
-          >
-            <Map className="w-4 h-4" />
-            2D Radar Replay
-          </button>
-
-          <button
-            onClick={() => setActiveTab("roadmap")}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all ${
-              activeTab === "roadmap"
-                ? "bg-amber-500 text-black shadow-lg shadow-amber-500/20"
-                : "bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800"
-            }`}
-          >
-            <Flame className="w-4 h-4 text-orange-400" />
-            Roadmap (Reja)
-          </button>
-        </div>
-
-        {/* Tab 1: Overview & Scoreboard */}
-        {activeTab === "overview" && (
-          <Scoreboard
-            match={matchData}
-            onSelectPlayerForReel={handleSelectPlayerForReel}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+        {/* Tab 1: Faceit & CS Demo Manager Match Browser */}
+        {activeTab === "matches" && (
+          <FaceitMatchBrowser
+            user={faceitUser}
+            matches={faceitMatches}
+            onSelectMatchForStudio={handleSelectMatchForStudio}
+            onSelectMatchForRecord={handleSelectMatchForStudio}
           />
         )}
 
@@ -231,6 +155,21 @@ export default function Home() {
         {/* Tab 4: Roadmap */}
         {activeTab === "roadmap" && <RoadmapSection />}
       </main>
+
+      {/* Steam Auth Modal */}
+      <SteamAuthModal
+        isOpen={isSteamModalOpen}
+        onClose={() => setIsSteamModalOpen(false)}
+        onSuccess={handleSteamLoginSuccess}
+      />
+
+      {/* Faceit Connect Modal */}
+      <FaceitAuthModal
+        isOpen={isFaceitModalOpen}
+        onClose={() => setIsFaceitModalOpen(false)}
+        onSuccess={handleFaceitConnectSuccess}
+        currentNickname={faceitUser.nickname}
+      />
 
       {/* Footer */}
       <Footer />

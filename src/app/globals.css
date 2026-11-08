@@ -2,70 +2,87 @@
 
 @layer base {
   :root {
-    --bg-dark: #07090e;
-    --bg-card: #0e131f;
-    --bg-card-hover: #151c2e;
-    --cs-orange: #f59e0b;
-    --cs-orange-glow: rgba(245, 158, 11, 0.25);
-    --cs-ct: #00d2ff;
-    --cs-ct-glow: rgba(0, 210, 255, 0.25);
-    --cs-t: #f97316;
+    --steam-dark: #171a21;
+    --steam-navy: #1b2838;
+    --steam-card: #16202d;
+    --steam-card-hover: #1f2f42;
+    --steam-border: #2a475e;
+    --steam-blue: #66c0f4;
+    --steam-blue-deep: #1a9fff;
+    --steam-green: #a4d007;
+    --steam-text-muted: #8f98a0;
+    --faceit-orange: #ff5500;
   }
 }
 
 body {
-  background-color: #07090e;
-  color: #f1f5f9;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  background-color: #171a21;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(33, 44, 61, 0.4) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(27, 40, 56, 0.5) 0px, transparent 50%);
+  background-attachment: fixed;
+  color: #c6d4df;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   overflow-x: hidden;
 }
 
-/* Custom scrollbar */
+/* Steam-styled scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: #171a21;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 4px;
+  background: #2a475e;
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #3d678a;
 }
 
-/* Cyber glow and grid backgrounds */
-.cs-grid-bg {
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 36px 36px;
+/* Steam Button Gradients */
+.btn-steam-green {
+  background: linear-gradient(to right, #75b022 5%, #588a1b 95%);
+  color: #d2efa9;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.6);
+  border-radius: 2px;
+}
+.btn-steam-green:hover {
+  background: linear-gradient(to right, #8ed629 5%, #6aa621 95%);
+  color: #ffffff;
 }
 
-.cs-radial-glow {
-  background: radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.12) 0%, transparent 70%);
+.btn-steam-blue {
+  background: linear-gradient(to right, #47bfff 5%, #1a9fff 95%);
+  color: #ffffff;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.6);
+  border-radius: 2px;
+}
+.btn-steam-blue:hover {
+  background: linear-gradient(to right, #63c9ff 5%, #2ba5ff 95%);
 }
 
-.cs-ct-radial-glow {
-  background: radial-gradient(circle at 80% 30%, rgba(0, 210, 255, 0.08) 0%, transparent 60%);
+.btn-steam-dark {
+  background: rgba(103, 193, 245, 0.1);
+  color: #66c0f4;
+  border-radius: 2px;
+}
+.btn-steam-dark:hover {
+  background: rgba(103, 193, 245, 0.2);
+  color: #ffffff;
 }
 
-.glow-orange {
-  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.35);
+/* Steam Profile in-game avatar frame */
+.steam-in-game-border {
+  border: 2px solid #a4d007;
+  box-shadow: 0 0 10px rgba(164, 208, 7, 0.4);
 }
 
-.glow-blue {
-  box-shadow: 0 0 25px -5px rgba(0, 210, 255, 0.35);
-}
-
-.text-glow-orange {
-  text-shadow: 0 0 16px rgba(245, 158, 11, 0.5);
-}
-
-.text-glow-blue {
-  text-shadow: 0 0 16px rgba(0, 210, 255, 0.5);
+.steam-online-border {
+  border: 2px solid #66c0f4;
+  box-shadow: 0 0 10px rgba(102, 192, 244, 0.4);
 }
 
 /* Killfeed flash animation */
