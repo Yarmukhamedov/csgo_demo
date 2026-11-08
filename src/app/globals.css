@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-dark: #07090e;
+    --bg-card: #0e131f;
+    --bg-card-hover: #151c2e;
+    --cs-orange: #f59e0b;
+    --cs-orange-glow: rgba(245, 158, 11, 0.25);
+    --cs-ct: #00d2ff;
+    --cs-ct-glow: rgba(0, 210, 255, 0.25);
+    --cs-t: #f97316;
+  }
+}
+
+body {
+  background-color: #07090e;
+  color: #f1f5f9;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Cyber glow and grid backgrounds */
+.cs-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.cs-radial-glow {
+  background: radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.12) 0%, transparent 70%);
+}
+
+.cs-ct-radial-glow {
+  background: radial-gradient(circle at 80% 30%, rgba(0, 210, 255, 0.08) 0%, transparent 60%);
+}
+
+.glow-orange {
+  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.35);
+}
+
+.glow-blue {
+  box-shadow: 0 0 25px -5px rgba(0, 210, 255, 0.35);
+}
+
+.text-glow-orange {
+  text-shadow: 0 0 16px rgba(245, 158, 11, 0.5);
+}
+
+.text-glow-blue {
+  text-shadow: 0 0 16px rgba(0, 210, 255, 0.5);
+}
+
+/* Killfeed flash animation */
+@keyframes killfeedSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-killfeed {
+  animation: killfeedSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
