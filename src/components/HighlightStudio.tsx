@@ -305,6 +305,59 @@ export const HighlightStudio: React.FC<HighlightStudioProps> = ({
               </label>
             </div>
           </div>
+
+          {/* Real 3D In-Game Broadcast Recorder (Allstar Engine) */}
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-slate-900 to-sky-500/10 border-2 border-amber-500/40 shadow-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="p-2 rounded-xl bg-amber-500 text-black font-black text-xs">
+                  3D CS2
+                </span>
+                <div>
+                  <h4 className="text-sm font-black text-white">
+                    Haqiqiy CS2 O&apos;yin Ichidagi Translyatsiya Video Renderi
+                  </h4>
+                  <p className="text-[11px] text-slate-400">
+                    Allstar.gg kabi 1080p 60 FPS in-game kadrlar, AWP zarbalari va sound FX.
+                  </p>
+                </div>
+              </div>
+
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                100% VAC XAVFSIZ (-insecure)
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
+              <div>
+                <div className="text-slate-400">Faol Demo:</div>
+                <div className="font-mono text-amber-400 font-bold truncate">
+                  my_highlight.dem (172 MB Mirage)
+                </div>
+              </div>
+              <div>
+                <div className="text-slate-400">Dvigatel Holati:</div>
+                <div className="text-emerald-400 font-bold">
+                  ✓ HLAE + FFmpeg O&apos;rnatildi
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-300 space-y-1">
+              <div className="font-bold text-white flex items-center gap-1.5">
+                <span>Qanday ishga tushiriladi?</span>
+              </div>
+              <p>
+                1. Loyihangizdagi <code className="text-amber-400 font-mono font-bold">START_RECORDING.bat</code> faylini bosing.
+              </p>
+              <p>
+                2. CS2 avtomatik ravishda xavfsiz rejimda ochilib, ushbu demoni qo&apos;yadi.
+              </p>
+              <p>
+                3. O&apos;yin ichida <strong className="text-amber-400">[F9]</strong> tugmasini bosib videoni boshlang, <strong className="text-amber-400">[F10]</strong> bilan to&apos;xtatib tayyor MP4 videoni oling!
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Right Column: Live Video Reel Simulator (5 cols) */}

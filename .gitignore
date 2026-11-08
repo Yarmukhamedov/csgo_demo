@@ -40,4 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
+# local tools and large demos
+tools/
+*.dem
+*.zip
+output_clips/
