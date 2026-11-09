@@ -88,28 +88,38 @@ export const SteamHeader: React.FC<SteamHeaderProps> = ({
               <span className="font-bold text-white">UZ</span>
             </div>
 
-            {/* User Profile Badge (Steam In-Game Green Border) */}
-            <div
-              onClick={onOpenSteamAuth}
-              className="flex items-center gap-2 bg-[#1b2838] hover:bg-[#203248] p-1.5 pr-3 rounded-full border border-[#2a475e] cursor-pointer transition-all shadow-md group"
-            >
-              {/* Avatar with In-Game Green Border */}
-              <div className="w-7 h-7 rounded-full steam-in-game-border overflow-hidden bg-[#171a21]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={user.avatar}
-                  alt={user.nickname}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            {/* User Profile Badge (Steam In-Game Green Border) or Sign In button */}
+            {user.is_logged_in ? (
+              <div
+                onClick={onOpenSteamAuth}
+                className="flex items-center gap-2 bg-[#1b2838] hover:bg-[#203248] p-1.5 pr-3 rounded-full border border-[#2a475e] cursor-pointer transition-all shadow-md group"
+              >
+                {/* Avatar with In-Game Green Border */}
+                <div className="w-7 h-7 rounded-full steam-in-game-border overflow-hidden bg-[#171a21]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={user.avatar}
+                    alt={user.nickname}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
 
-              <div className="flex items-center gap-1">
-                <span className="text-xs font-bold text-white group-hover:text-[#66c0f4] transition-colors">
-                  {user.nickname}
-                </span>
-                <ChevronDown className="w-3 h-3 text-[#8f98a0]" />
+                <div className="flex items-center gap-1">
+                  <span className="text-xs font-bold text-white group-hover:text-[#66c0f4] transition-colors">
+                    {user.nickname}
+                  </span>
+                  <ChevronDown className="w-3 h-3 text-[#8f98a0]" />
+                </div>
               </div>
-            </div>
+            ) : (
+              <button
+                onClick={onOpenSteamAuth}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1b2838] hover:bg-[#203248] border border-[#66c0f4]/50 text-white text-xs font-bold shadow-md hover:border-[#66c0f4] transition-all"
+              >
+                <span className="w-2 h-2 rounded-full bg-[#a4d007]" />
+                <span>Steam orqali kirish</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
