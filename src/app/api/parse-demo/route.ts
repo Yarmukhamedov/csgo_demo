@@ -201,7 +201,9 @@ export async function POST(req: NextRequest) {
       console.error("Parse error:", parseErr);
       return NextResponse.json(
         {
-          error: `Demo faylini o'qishda xatolik: ${parseErr.message || "Noto'g'ri .dem formati"}`,
+          error: parseErr.message?.includes("MalformedMessage")
+            ? "Demo faylini o'qib bo'lmadi (agar fayl .zst arxiv bo'lsa, avval uni arxivdan chiqarib .dem faylni yuklang)."
+            : `Demo faylini o'qishda xatolik: ${parseErr.message || "Noto'g'ri .dem formati"}`,
         },
         { status: 500 }
       );

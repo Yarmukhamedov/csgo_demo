@@ -60,7 +60,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ match, onSelectPlayerFor
                   {p.team === "CT" ? "Counter-Terrorist" : "Terrorist"}
                 </span>
                 {p.premierRating && (
-                  <span>• {p.premierRating.toLocaleString()} CS-Rating</span>
+                  <span suppressHydrationWarning>• {p.premierRating.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} CS-Rating</span>
                 )}
                 {p.faceitLevel && (
                   <span>• Faceit Lvl {p.faceitLevel}</span>

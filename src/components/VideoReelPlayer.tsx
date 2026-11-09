@@ -253,8 +253,8 @@ mirv_cmd at ${activeClip.tickEnd} "mirv_streams record end; echo Highlight Compl
                 <h3 className="text-lg font-black text-white tracking-wide">
                   {playerStats.name}
                 </h3>
-                <p className="text-xs text-amber-400 font-mono mt-0.5">
-                  {playerStats.premierRating?.toLocaleString()} CS-Rating
+                <p className="text-xs text-amber-400 font-mono mt-0.5" suppressHydrationWarning>
+                  {playerStats.premierRating ? playerStats.premierRating.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""} CS-Rating
                 </p>
 
                 <div className="grid grid-cols-3 gap-2 w-full max-w-[220px] mt-4 pt-4 border-t border-slate-800 text-center">
