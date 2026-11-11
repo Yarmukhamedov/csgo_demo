@@ -201,3 +201,42 @@ export const SAMPLE_OPENING_DUELS: OpeningDuel[] = [
   { round: 11, winner: "S1Mple_UZ", winnerTeam: "CT", loser: "Nukus_Shadow", loserTeam: "T", weapon: "Desert Eagle", timeSec: 11, location: "A Palace" },
   { round: 18, winner: "S1Mple_UZ", winnerTeam: "CT", loser: "Shox_Fergana", loserTeam: "T", weapon: "AWP", timeSec: 15, location: "A Connector" },
 ];
+
+/**
+ * Returns the official CS2 map thumbnail image path (downloaded from akiver/cs-demo-manager)
+ */
+export function getMapThumbnail(mapName: string): string {
+  const clean = (mapName || "").toLowerCase().trim();
+  if (clean.includes("dust2") || clean.includes("dust_2") || clean.includes("dust ii") || clean === "dust2") {
+    return "/images/maps/de_dust2.png";
+  }
+  if (clean.includes("mirage")) return "/images/maps/de_mirage.png";
+  if (clean.includes("ancient")) return "/images/maps/de_ancient.png";
+  if (clean.includes("nuke")) return "/images/maps/de_nuke.png";
+  if (clean.includes("inferno")) return "/images/maps/de_inferno.png";
+  if (clean.includes("anubis")) return "/images/maps/de_anubis.png";
+  if (clean.includes("vertigo")) return "/images/maps/de_vertigo.png";
+  if (clean.includes("overpass")) return "/images/maps/de_overpass.png";
+  if (clean.includes("train")) return "/images/maps/de_train.png";
+  if (clean.includes("office")) return "/images/maps/cs_office.png";
+  if (clean.includes("italy")) return "/images/maps/cs_italy.png";
+  return "/images/maps/thumbnail_unknown.png";
+}
+
+/**
+ * Returns the official CS2 radar map overview image path
+ */
+export function getMapRadar(mapName: string): string {
+  const clean = (mapName || "").toLowerCase().trim();
+  if (clean.includes("dust2") || clean.includes("dust_2") || clean.includes("dust ii")) {
+    return "/images/maps/radars/de_dust2.png";
+  }
+  if (clean.includes("mirage")) return "/images/maps/radars/de_mirage.png";
+  if (clean.includes("ancient")) return "/images/maps/radars/de_ancient.png";
+  if (clean.includes("nuke")) return "/images/maps/radars/de_nuke.png";
+  if (clean.includes("inferno")) return "/images/maps/radars/de_inferno.png";
+  if (clean.includes("anubis")) return "/images/maps/radars/de_anubis.png";
+  if (clean.includes("vertigo")) return "/images/maps/radars/de_vertigo.png";
+  return "/images/maps/radars/de_mirage.png";
+}
+

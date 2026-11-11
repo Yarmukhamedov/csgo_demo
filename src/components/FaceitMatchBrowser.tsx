@@ -12,6 +12,7 @@ import {
   ArrowUpDown, Layers, Check, ExternalLink, Zap
 } from "lucide-react";
 import confetti from "canvas-confetti";
+import { getMapThumbnail } from "@/lib/maps-data";
 
 interface FaceitMatchBrowserProps {
   user: FaceitPlayer;
@@ -238,13 +239,13 @@ export const FaceitMatchBrowser: React.FC<FaceitMatchBrowserProps> = ({
 
       {/* 3. Secondary Filter Bar: Mode Pills & Dropdowns (Screenshot aligned) */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-        {/* Left: Mode selector pills */}
+        {/* Left: Mode selector pills with Official Logos */}
         <div className="flex items-center gap-1.5 flex-wrap">
           <button
             onClick={() => setModeFilter("all")}
             className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-colors ${
               modeFilter === "all"
-                ? "bg-[#2a475e] text-white border border-[#66c0f4]/50"
+                ? "bg-[#2a475e] text-white border border-[#66c0f4]/50 shadow-sm"
                 : "bg-[#181d24] text-[#8f98a0] hover:text-white border border-[#2a475e]/60"
             }`}
           >
@@ -252,56 +253,90 @@ export const FaceitMatchBrowser: React.FC<FaceitMatchBrowserProps> = ({
             <span className="text-[10px] opacity-75 font-mono">{matches.length}</span>
           </button>
 
+          {/* Official Faceit Filter */}
           <button
             onClick={() => setModeFilter("faceit")}
-            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-colors ${
+            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-2 transition-all ${
               modeFilter === "faceit"
-                ? "bg-[#ff5500]/20 text-[#ff7733] border border-[#ff5500]"
+                ? "bg-[#ff5500]/20 text-[#ff7733] border border-[#ff5500] shadow-sm shadow-[#ff5500]/20"
                 : "bg-[#181d24] text-[#8f98a0] hover:text-[#ff7733] border border-[#2a475e]/60"
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-[#ff5500]" />
+            <div className="w-3.5 h-3.5 flex items-center justify-center shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/sources/faceit-white.png"
+                alt="FACEIT"
+                className="w-full h-full object-contain filter drop-shadow"
+              />
+            </div>
             <span>Faceit</span>
             <span className="text-[10px] opacity-75 font-mono">
-              {matches.filter(m => m.game_mode === "faceit").length}
+              {matches.filter((m) => m.game_mode === "faceit").length}
             </span>
           </button>
 
+          {/* Official Premier Filter */}
           <button
             onClick={() => setModeFilter("premier")}
-            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-colors ${
+            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-2 transition-all ${
               modeFilter === "premier"
-                ? "bg-[#66c0f4]/20 text-[#66c0f4] border border-[#66c0f4]"
+                ? "bg-[#66c0f4]/20 text-[#66c0f4] border border-[#66c0f4] shadow-sm shadow-[#66c0f4]/20"
                 : "bg-[#181d24] text-[#8f98a0] hover:text-[#66c0f4] border border-[#2a475e]/60"
             }`}
           >
-            <Shield className="w-3 h-3 text-[#66c0f4]" />
+            <div className="w-4 h-4 flex items-center justify-center shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/ranks/premier/tier-5.png"
+                alt="Premier"
+                className="w-full h-full object-contain filter drop-shadow"
+              />
+            </div>
             <span>Premier</span>
             <span className="text-[10px] opacity-75 font-mono">
-              {matches.filter(m => m.game_mode === "premier").length}
+              {matches.filter((m) => m.game_mode === "premier").length}
             </span>
           </button>
 
+          {/* Official Competitive Filter */}
           <button
             onClick={() => setModeFilter("competitive")}
-            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-colors opacity-60 hover:opacity-100 ${
+            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-2 transition-all ${
               modeFilter === "competitive"
                 ? "bg-[#2a475e] text-white border border-[#66c0f4]"
-                : "bg-[#181d24] text-[#8f98a0] border border-[#2a475e]/60"
+                : "bg-[#181d24] text-[#8f98a0] hover:text-white border border-[#2a475e]/60"
             }`}
           >
+            <div className="w-4 h-4 flex items-center justify-center shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/ranks/competitive/18.png"
+                alt="Competitive"
+                className="w-full h-full object-contain filter drop-shadow"
+              />
+            </div>
             <span>Competitive</span>
             <span className="text-[10px] opacity-75 font-mono">0</span>
           </button>
 
+          {/* Official Valve / Community Filter */}
           <button
             onClick={() => setModeFilter("community")}
-            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-colors opacity-60 hover:opacity-100 ${
+            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-2 transition-all ${
               modeFilter === "community"
                 ? "bg-[#2a475e] text-white border border-[#66c0f4]"
-                : "bg-[#181d24] text-[#8f98a0] border border-[#2a475e]/60"
+                : "bg-[#181d24] text-[#8f98a0] hover:text-white border border-[#2a475e]/60"
             }`}
           >
+            <div className="w-3.5 h-3.5 flex items-center justify-center shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/sources/valve-white.png"
+                alt="Community"
+                className="w-full h-full object-contain opacity-90"
+              />
+            </div>
             <span>Community</span>
             <span className="text-[10px] opacity-75 font-mono">0</span>
           </button>
@@ -394,20 +429,37 @@ export const FaceitMatchBrowser: React.FC<FaceitMatchBrowserProps> = ({
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
                             {/* Map name & Mode badge (col 3) */}
                             <div className="lg:col-span-3 flex items-center gap-3">
-                              {/* Map Thumbnail / Icon */}
-                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2a475e] to-[#171a21] border border-[#2a475e] flex items-center justify-center font-black text-xs text-[#66c0f4] shadow-inner uppercase overflow-hidden shrink-0">
-                                {m.map_display.slice(0, 3)}
+                              {/* Official CS2 Map Thumbnail from akiver/cs-demo-manager */}
+                              <div className="w-11 h-11 rounded-xl border border-[#2a475e] overflow-hidden bg-[#141820] shrink-0 shadow-md relative group/map">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={getMapThumbnail(m.map_name)}
+                                  alt={m.map_display}
+                                  className="w-full h-full object-cover group-hover/map:scale-110 transition-transform duration-300"
+                                />
                               </div>
 
                               <div>
                                 <div className="flex items-center gap-1.5">
                                   <span className="font-black text-white text-sm">{m.map_display}</span>
-                                  <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded font-mono uppercase ${
+                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded font-mono uppercase inline-flex items-center gap-1 ${
                                     m.game_mode === "premier"
                                       ? "bg-[#66c0f4]/20 text-[#66c0f4] border border-[#66c0f4]/40"
                                       : "bg-[#ff5500]/20 text-[#ff7733] border border-[#ff5500]/40"
                                   }`}>
-                                    {m.game_mode === "premier" ? "Premier" : "Faceit"}
+                                    {m.game_mode === "premier" ? (
+                                      <>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src="/images/ranks/premier/tier-5.png" alt="Premier" className="w-2.5 h-2.5 object-contain" />
+                                        Premier
+                                      </>
+                                    ) : (
+                                      <>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src="/images/sources/faceit-white.png" alt="Faceit" className="w-2.5 h-2.5 object-contain" />
+                                        Faceit
+                                      </>
+                                    )}
                                   </span>
                                 </div>
                                 <div className="text-[11px] text-[#8f98a0]">
@@ -457,9 +509,20 @@ export const FaceitMatchBrowser: React.FC<FaceitMatchBrowserProps> = ({
 
                             {/* Rank Badge (col 1) */}
                             <div className="lg:col-span-1 flex items-center justify-center">
-                              <div className="w-7 h-7 rounded-full bg-[#ff5500]/20 border border-[#ff5500] flex items-center justify-center text-[10px] font-black text-[#ff7733] shadow-sm">
-                                {m.rank_badge || "10"}
-                              </div>
+                              {m.game_mode === "premier" ? (
+                                <div className="flex items-center gap-1" title="CS2 Premier Rating: 22,480">
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src="/images/ranks/premier/tier-5.png"
+                                    alt="Premier Tier"
+                                    className="w-7 h-7 object-contain filter drop-shadow"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="w-7 h-7 rounded-full bg-[#ff5500]/20 border border-[#ff5500] flex items-center justify-center text-[10px] font-black text-[#ff7733] shadow-sm" title="Faceit Level 10">
+                                  {m.rank_badge || "10"}
+                                </div>
+                              )}
                             </div>
 
                             {/* Clips / Demo Buttons (col 1) */}
@@ -602,10 +665,15 @@ export const FaceitMatchBrowser: React.FC<FaceitMatchBrowserProps> = ({
                         }`}
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                          {/* Left: Map avatar, Score & Date */}
+                          {/* Left: Official Map Thumbnail, Score & Date */}
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-[#141820] border border-[#2a475e]/60 flex items-center justify-center font-bold text-xs text-slate-400 uppercase">
-                              {m.map_display.slice(0, 3)}
+                            <div className="w-11 h-11 rounded-xl border border-[#2a475e]/60 overflow-hidden bg-[#141820] shrink-0 shadow-md relative group/map">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={getMapThumbnail(m.map_name)}
+                                alt={m.map_display}
+                                className="w-full h-full object-cover group-hover/map:scale-110 transition-transform duration-300"
+                              />
                             </div>
 
                             <div>
@@ -614,8 +682,14 @@ export const FaceitMatchBrowser: React.FC<FaceitMatchBrowserProps> = ({
                                   {m.map_display} <span className="font-mono text-xs text-slate-300">{m.score_team1}-{m.score_team2}</span>
                                 </span>
                               </div>
-                              <div className="text-[11px] text-[#8f98a0]">
-                                <span className="text-[#ff7733] font-bold">Faceit</span> {m.exact_time || m.date_formatted}
+                              <div className="text-[11px] text-[#8f98a0] flex items-center gap-1.5">
+                                <span className="inline-flex items-center gap-1 text-[#ff7733] font-bold">
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img src="/images/sources/faceit-white.png" alt="Faceit" className="w-2.5 h-2.5 object-contain" />
+                                  Faceit
+                                </span>
+                                <span>•</span>
+                                <span>{m.exact_time || m.date_formatted}</span>
                               </div>
                             </div>
                           </div>

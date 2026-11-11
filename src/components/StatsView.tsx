@@ -6,6 +6,7 @@ import {
   BarChart3, Trophy, Flame, Target, Shield, 
   TrendingUp, Crosshair, Award, ArrowUpRight 
 } from "lucide-react";
+import { getMapThumbnail } from "@/lib/maps-data";
 
 interface StatsViewProps {
   user: FaceitPlayer;
@@ -104,9 +105,19 @@ export const StatsView: React.FC<StatsViewProps> = ({ user, matches }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {mapStats.map((map) => (
-            <div key={map.name} className="bg-[#13171e] p-3.5 rounded-xl border border-[#2a475e]/50 space-y-2">
+            <div key={map.name} className="bg-[#13171e] p-3.5 rounded-xl border border-[#2a475e]/50 space-y-2 group/stat hover:border-[#66c0f4]/50 transition-colors">
               <div className="flex items-center justify-between text-xs font-bold text-white">
-                <span>{map.name}</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-lg overflow-hidden border border-[#2a475e]/80 shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={getMapThumbnail(map.name)}
+                      alt={map.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span>{map.name}</span>
+                </div>
                 <span className="font-mono text-[#a4d007]">{map.winRate}% Win</span>
               </div>
               <div className="w-full bg-[#171a21] h-1.5 rounded-full overflow-hidden">

@@ -6,7 +6,7 @@ import {
   Play, Pause, RotateCcw, Map, Eye, Shield, Skull, Zap, 
   Flame, Crosshair, FastForward, Activity, Layers, Radio, Award
 } from "lucide-react";
-import { CS2_MAPS, SAMPLE_HEATMAP, SAMPLE_OPENING_DUELS } from "@/lib/maps-data";
+import { CS2_MAPS, SAMPLE_HEATMAP, SAMPLE_OPENING_DUELS, getMapRadar } from "@/lib/maps-data";
 
 interface Radar2DProps {
   match: MatchData;
@@ -356,8 +356,16 @@ export const Radar2D: React.FC<Radar2DProps> = ({ match }) => {
 
           {/* 2D Canvas Container */}
           <div className="relative w-full max-w-2xl mx-auto aspect-square rounded-2xl bg-[#080c14] border-2 border-slate-800 overflow-hidden shadow-2xl">
+            {/* Real CS2 Radar Image from akiver/cs-demo-manager */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={getMapRadar(selectedMapKey)}
+              alt={currentMap.displayName}
+              className="absolute inset-0 w-full h-full object-contain opacity-45 pointer-events-none select-none filter contrast-125"
+            />
+
             {/* Grid background */}
-            <div className="absolute inset-0 cs-grid-bg opacity-30" />
+            <div className="absolute inset-0 cs-grid-bg opacity-20" />
 
             {/* Sites Zones */}
             {currentMap.sites.map((s, idx) => (
